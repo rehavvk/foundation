@@ -117,5 +117,20 @@ namespace Rehawk.Foundation.Assets
             arrayFieldInfo.SetValue(directory, list.ToArray());
             EditorUtility.SetDirty(directory);
         }
+        
+        public static void ForEach<T>(string[] importedAssets, Action<T> action) 
+            where T : Object
+        {
+            Type type = typeof(T);
+            
+            for (int i = 0; i < importedAssets.Length; i++)
+            {
+                if (type.IsAssignableFrom(AssetDatabase.GetMainAssetTypeAtPath(importedAssets[i])))
+                {
+                    var importedObject = AssetDatabase.LoadAssetAtPath<T>(importedAssets[i]);
+                    action.Invoke(importedObject);
+                }
+            }
+        }
     }
 }

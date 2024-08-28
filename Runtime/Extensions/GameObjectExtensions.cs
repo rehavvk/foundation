@@ -9,7 +9,8 @@ namespace Rehawk.Foundation.Extensions
             return gameObject.TryGetComponent(out T _);
         }
         
-        public static T AddOrGetComponent<T>(this GameObject gameObject) where T : Component 
+        public static T GetOrAddComponent<T>(this GameObject gameObject) 
+            where T : Component 
         {
             if (gameObject.TryGetComponent(out T newComponent))
             {

@@ -1,6 +1,9 @@
 {
     "name": "Rehawk.Foundation.Editor",
-    "references": [],
+    "rootNamespace": "",
+    "references": [
+        "GUID:c3118203ee4d361449d0da713cf49692"
+    ],
     "includePlatforms": [
         "Editor"
     ],

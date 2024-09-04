@@ -9,13 +9,13 @@ namespace Rehawk.Foundation.Misc
     [AttributeUsage(AttributeTargets.Field)]
     public sealed class GetComponentAttribute : PropertyAttribute
     {
-        public bool FromChildren;
+        public bool FromParents;
         
         public GetComponentAttribute() {}
 
-        public GetComponentAttribute(bool fromChildren)
+        public GetComponentAttribute(bool fromParents)
         {
-            FromChildren = fromChildren;
+            FromParents = fromParents;
         }
     }
 }

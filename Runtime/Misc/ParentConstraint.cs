@@ -2,13 +2,13 @@
 
 namespace Rehawk.Foundation.Misc
 {
-    [ExecuteAlways]
-    public class CustomParentConstraint : MonoBehaviour
+    public class ParentConstraint : MonoBehaviour
     {
+        [Disabled]
+        [SerializeField] private Transform parent;
+
         private Vector3 localPosition;
         private Quaternion localRotation;
-
-        private Transform parent;
 
         private void Update()
         {
@@ -22,18 +22,12 @@ namespace Rehawk.Foundation.Misc
             }
         }
         
-        public void ActivateConstraint(Transform parent, Vector3 localPosition, Quaternion localRotation)
+        public void Init(Transform parent, Vector3 localPosition, Quaternion localRotation)
         {
             this.parent = parent;
             this.localPosition = localPosition;
             this.localRotation = localRotation;
             enabled = true;
-        }
-        
-        [ContextMenu("Activate Constraint World")]
-        public void ActivateConstraintWorld(Transform parent, Vector3 position, Quaternion rotation)
-        {
-            ActivateConstraint(parent, parent.InverseTransformPoint(position), rotation * Quaternion.Inverse(parent.rotation));
         }
     }
 }

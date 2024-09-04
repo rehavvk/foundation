@@ -21,13 +21,13 @@ namespace Rehawk.Foundation.Misc
             {
                 if (property.objectReferenceValue == null)
                 {
-                    if (attribute is GetComponentAttribute getComponentAttribute && getComponentAttribute.FromChildren)
+                    if (attribute is GetComponentAttribute getComponentAttribute && getComponentAttribute.FromParents)
                     {
-                        property.objectReferenceValue = monoBehaviour.GetComponentInChildren(fieldInfo.FieldType);
+                        property.objectReferenceValue = monoBehaviour.GetComponentInParent(fieldInfo.FieldType);
                     }
                     else
                     {
-                        property.objectReferenceValue = monoBehaviour.GetComponent(fieldInfo.FieldType);
+                        property.objectReferenceValue = monoBehaviour.GetComponentInChildren(fieldInfo.FieldType);
                     }
                 }
             }

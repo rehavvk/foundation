@@ -73,6 +73,17 @@ namespace Rehawk.Foundation.UI
             enableCalled = true;
         }
 
+        protected override void OnDisable()
+        {
+            base.OnDisable();
+
+            isPointerInside = false;
+            isPointerDown = false;
+            hasSelection = false;
+            
+            DoStateTransition(CurrentSelectionState, true);
+        }
+
         protected override void OnValidate()
         {
             base.OnValidate();
@@ -87,9 +98,6 @@ namespace Rehawk.Foundation.UI
 
         private void DoStateTransition(SelectionState state, bool instant)
         {
-            if (!gameObject.activeInHierarchy)
-                return;
-            
             Color tintColor;
             
             switch (state)

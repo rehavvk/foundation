@@ -21,25 +21,22 @@ namespace Rehawk.Foundation.Misc
         
         public static T[,] GetSlice<T>(ref T[,] array, int x, int y, int width, int height)
         {
-            var slice = new T[width, height];
-
-            int sliceX = 0;
-            int sliceY = 0;
-            
-            for (int xIndex = x; xIndex < x + width; xIndex++)
+            // Validate input parameters
+            if (x < 0 || y < 0 || x + width > array.GetLength(0) || y + height > array.GetLength(1))
             {
-                for (int yIndex = y; yIndex < y + height; yIndex++)
+                throw new ArgumentOutOfRangeException("Invalid slice coordinates or dimensions.");
+            }
+
+            // Create a new slice array with the specified dimensions
+            T[,] slice = new T[width, height];
+
+            // Copy slice values from the original array
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
                 {
-                    if (array.HasIndex(xIndex, yIndex) && slice.HasIndex(sliceX, sliceY))
-                    {
-                        slice[sliceX, sliceY] = array[xIndex, yIndex];
-                    }
-
-                    sliceY++;
+                    slice[i, j] = array[x + i, y + j];
                 }
-
-                sliceY = 0;
-                sliceX++;
             }
 
             return slice;
@@ -47,54 +44,48 @@ namespace Rehawk.Foundation.Misc
         
         public static void ApplySlice<T>(ref T[,] array, T[,] slice, int x, int y, int width, int height)
         {
-            int sliceX = 0;
-            int sliceY = 0;
-            
-            for (int xIndex = x; xIndex < x + width; xIndex++)
+            // Validate input parameters
+            if (x < 0 || y < 0 || x + width > array.GetLength(0) || y + height > array.GetLength(1))
             {
-                for (int yIndex = y; yIndex < y + height; yIndex++)
-                {
-                    if (array.HasIndex(xIndex, yIndex) && slice.HasIndex(sliceX, sliceY))
-                    {
-                        array[xIndex, yIndex] = slice[sliceX, sliceY];
-                    }
-                    
-                    sliceY++;
-                }
+                throw new ArgumentOutOfRangeException("Invalid slice coordinates or dimensions.");
+            }
 
-                sliceY = 0;
-                sliceX++;
+            if (slice.GetLength(0) != width || slice.GetLength(1) != height)
+            {
+                throw new ArgumentException("Slice dimensions must match specified width and height.");
+            }
+
+            // Copy slice values back to original array
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    array[x + i, y + j] = slice[i, j];
+                }
             }
         }
         
         public static T[,,] GetSlice<T>(ref T[,,] array, int x, int y, int z, int width, int height, int depth)
         {
-            var slice = new T[width, height, depth];
-
-            int sliceX = 0;
-            int sliceY = 0;
-            int sliceZ = 0;
-            
-            for (int xIndex = x; xIndex < x + width; xIndex++)
+            // Validate input parameters
+            if (x < 0 || y < 0 || z < 0 || x + width > array.GetLength(0) || y + height > array.GetLength(1) || z + depth > array.GetLength(2))
             {
-                for (int yIndex = y; yIndex < y + height; yIndex++)
-                {
-                    for (int zIndex = z; zIndex < z + depth; zIndex++)
-                    {
-                        if (array.HasIndex(xIndex, yIndex, zIndex) && slice.HasIndex(sliceX, sliceY, sliceZ))
-                        {
-                            slice[sliceX, sliceY, sliceZ] = array[xIndex, yIndex, zIndex];
-                        }
+                throw new ArgumentOutOfRangeException("Invalid slice coordinates or dimensions.");
+            }
 
-                        sliceZ++;
+            // Create a new slice array with the specified dimensions
+            T[,,] slice = new T[width, height, depth];
+
+            // Copy slice values from the original array
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    for (int k = 0; k < depth; k++)
+                    {
+                        slice[i, j, k] = array[x + i, y + j, z + k];
                     }
-                    
-                    sliceZ = 0;
-                    sliceY++;
                 }
-                
-                sliceY = 0;
-                sliceX++;
             }
 
             return slice;
@@ -102,30 +93,27 @@ namespace Rehawk.Foundation.Misc
         
         public static void ApplySlice<T>(ref T[,,] array, T[,,] slice, int x, int y, int z, int width, int height, int depth)
         {
-            int sliceX = 0;
-            int sliceY = 0;
-            int sliceZ = 0;
-            
-            for (int xIndex = x; xIndex < x + width; xIndex++)
+            // Validate input parameters
+            if (x < 0 || y < 0 || z < 0 || x + width > array.GetLength(0) || y + height > array.GetLength(1) || z + depth > array.GetLength(2))
             {
-                for (int yIndex = y; yIndex < y + height; yIndex++)
-                {
-                    for (int zIndex = z; zIndex < z + depth; zIndex++)
-                    {
-                        if (array.HasIndex(xIndex, yIndex, zIndex) && slice.HasIndex(sliceX, sliceY, sliceZ))
-                        {
-                            array[xIndex, yIndex, zIndex] = slice[sliceX, sliceY, sliceZ];
-                        }
+                throw new ArgumentOutOfRangeException("Invalid slice coordinates or dimensions.");
+            }
 
-                        sliceZ++;
+            if (slice.GetLength(0) != width || slice.GetLength(1) != height || slice.GetLength(2) != depth)
+            {
+                throw new ArgumentException("Slice dimensions must match specified width, height, and depth.");
+            }
+
+            // Copy slice values back to original array
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    for (int k = 0; k < depth; k++)
+                    {
+                        array[x + i, y + j, z + k] = slice[i, j, k];
                     }
-                    
-                    sliceZ = 0;
-                    sliceY++;
                 }
-                
-                sliceY = 0;
-                sliceX++;
             }
         }
     }

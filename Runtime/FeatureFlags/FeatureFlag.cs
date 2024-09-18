@@ -1,13 +1,18 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Rehawk.Foundation.FeatureFlags
 {
+    public delegate void FeatureFlagChangedDelegate(FeatureFlag featureFlag, bool previousValue, bool value);
+    
     [CreateAssetMenu(menuName = "Foundation/Feature Flag", order = 800)]
     public class FeatureFlag : ScriptableObject
     {
         [SerializeField] private string uid;
         [SerializeField] private bool defaultValue;
 
+        public event FeatureFlagChangedDelegate Changed;
+        
         public string Uid
         {
             get { return uid; }
@@ -25,7 +30,14 @@ namespace Rehawk.Foundation.FeatureFlags
 
         public void SetOverrideValue(bool value)
         {
+            bool previousValue = GetOverrideValue();
+            
+            if (previousValue == value)
+                return;
+            
             PlayerPrefs.SetInt(Uid, value ? 1 : 0);
+            
+            Changed?.Invoke(this, previousValue, value);
         }
 
         public static bool IsSet(FeatureFlag featureFlag)

@@ -6,11 +6,11 @@ namespace Rehawk.Foundation.Misc
     [DisallowMultipleComponent]
     public class EventBeforeDisable : MonoBehaviour
     {
-        public event Action<EventBeforeDisable> BeforeDisabled;
+        public event Action<GameObject> BeforeDisabled;
         
         private void OnDisable()
         {
-            BeforeDisabled?.Invoke(this);
+            BeforeDisabled?.Invoke(gameObject);
         }
     }
 }

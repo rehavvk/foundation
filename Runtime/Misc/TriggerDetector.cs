@@ -24,9 +24,8 @@ namespace Rehawk.Foundation.Misc
         
         private void OnTriggerEnter(Collider other)
         {
-            var eventBeforeDestroy = other.AddOrGetComponent<EventBeforeDestroy>();
-            eventBeforeDestroy.BeforeDestroyed += OnBeforeDestroyed;
-            
+            other.AddDisableListener(OnOtherDisabled);
+
             detectedColliders.Add(other);
             
             ColliderEntered?.Invoke(other);
@@ -34,17 +33,17 @@ namespace Rehawk.Foundation.Misc
 
         private void OnTriggerExit(Collider other)
         {
-            var eventBeforeDestroy = other.AddOrGetComponent<EventBeforeDestroy>();
-            eventBeforeDestroy.BeforeDestroyed -= OnBeforeDestroyed;
+            other.RemoveDisableListener(OnOtherDisabled);
 
             detectedColliders.Remove(other);
             
             ColliderLeft?.Invoke(other);
         }
         
-        private void OnBeforeDestroyed(EventBeforeDestroy eventBeforeDestroy)
+        private void OnOtherDisabled(GameObject other)
         {
-            detectedColliders.Remove(eventBeforeDestroy.GetComponent<Collider>());
+            other.RemoveDisableListener(OnOtherDisabled);
+            detectedColliders.Remove(other.GetComponent<Collider>());
         }
     }
 }

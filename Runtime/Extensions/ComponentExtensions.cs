@@ -1,4 +1,5 @@
 ﻿using System;
+using Rehawk.Foundation.Misc;
 using UnityEngine;
 
 namespace Rehawk.Foundation.Extensions
@@ -15,7 +16,7 @@ namespace Rehawk.Foundation.Extensions
             return component.TryGetComponent(type, out Component _);
         }
         
-        public static T AddOrGetComponent<T>(this Component component) where T : Component 
+        public static T GetOrAddComponent<T>(this Component component) where T : Component 
         {
             if (component.TryGetComponent(out T newComponent))
             {
@@ -25,7 +26,7 @@ namespace Rehawk.Foundation.Extensions
             return component.gameObject.AddComponent<T>();
         }
         
-        public static Component AddOrGetComponent(this Component component, Type type)
+        public static Component GetOrAddComponent(this Component component, Type type)
         {
             if (component.TryGetComponent(type, out Component newComponent))
             {
@@ -33,6 +34,22 @@ namespace Rehawk.Foundation.Extensions
             }
 
             return component.gameObject.AddComponent(type);
+        }
+
+        public static void AddDisableListener(this Component component, Action<GameObject> listener)
+        {
+            if (component == null)
+                return;
+            
+            component.gameObject.AddDisableListener(listener);
+        }
+
+        public static void RemoveDisableListener(this Component component, Action<GameObject> listener)
+        {
+            if (component == null)
+                return;
+
+            component.gameObject.RemoveDisableListener(listener);
         }
     }
 }

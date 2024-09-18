@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using Rehawk.Foundation.Misc;
+using UnityEngine;
 
 namespace Rehawk.Foundation.Extensions
 {
@@ -18,6 +20,16 @@ namespace Rehawk.Foundation.Extensions
             }
 
             return gameObject.AddComponent<T>();
+        }
+
+        public static void AddDisableListener(this GameObject gameObject, Action<GameObject> listener)
+        {
+            gameObject.GetOrAddComponent<EventBeforeDisable>().BeforeDisabled += listener;
+        }
+
+        public static void RemoveDisableListener(this GameObject gameObject, Action<GameObject> listener)
+        {
+            gameObject.GetOrAddComponent<EventBeforeDisable>().BeforeDisabled -= listener;
         }
     }
 }

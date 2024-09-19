@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -16,6 +17,7 @@ namespace Rehawk.Foundation.UI
         private Button button;
         
         private bool enableCalled = false;
+        private SelectionState previousSelectionState;
 
         private bool isPointerInside;
         private bool isPointerDown;
@@ -63,14 +65,16 @@ namespace Rehawk.Foundation.UI
             
             base.OnEnable();
 
-            if (EventSystem.current && EventSystem.current.currentSelectedGameObject == gameObject)
-            {
-                hasSelection = true;
-            }
-
-            DoStateTransition(CurrentSelectionState, true);
-
+            DoInitialTransition();
+            
             enableCalled = true;
+        }
+
+        protected override void Start()
+        {
+            base.Start();
+
+            DoInitialTransition();
         }
 
         protected override void OnDisable()
@@ -82,6 +86,11 @@ namespace Rehawk.Foundation.UI
             hasSelection = false;
             
             DoStateTransition(CurrentSelectionState, true);
+        }
+
+        private void Update()
+        {
+            DoStateTransition(CurrentSelectionState, false);
         }
 
         protected override void OnValidate()
@@ -96,8 +105,23 @@ namespace Rehawk.Foundation.UI
             }
         }
 
+        private void DoInitialTransition()
+        {
+            if (EventSystem.current && EventSystem.current.currentSelectedGameObject == gameObject)
+            {
+                hasSelection = true;
+            }
+            
+            DoStateTransition(CurrentSelectionState, true);
+        }
+
         private void DoStateTransition(SelectionState state, bool instant)
         {
+            if (previousSelectionState == state)
+                return;
+
+            previousSelectionState = state;
+            
             Color tintColor;
             
             switch (state)

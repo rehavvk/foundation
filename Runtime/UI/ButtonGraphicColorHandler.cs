@@ -27,7 +27,7 @@ namespace Rehawk.Foundation.UI
         {
             get
             {
-                if (!button.IsInteractable())
+                if (button != null && !button.IsInteractable())
                 {
                     return SelectionState.Disabled;
                 }
@@ -159,7 +159,7 @@ namespace Rehawk.Foundation.UI
         
         private void EvaluateAndTransitionToSelectionState()
         {
-            if (!IsActive() || !button.IsInteractable())
+            if (!IsActive() || (button != null && !button.IsInteractable()))
                 return;
 
             DoStateTransition(CurrentSelectionState, false);

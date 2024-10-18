@@ -1,19 +1,13 @@
-﻿using System;
-using UnityEngine;
-using UnityEngine.EventSystems;
+﻿using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Rehawk.Foundation.UI
 {
-    [RequireComponent(typeof(Button))]
-    public class ButtonGraphicColorHandler : UIBehaviour, 
-        IPointerDownHandler, IPointerUpHandler,
-        IPointerEnterHandler, IPointerExitHandler, 
-        ISelectHandler, IDeselectHandler
+    public abstract class ButtonStateHandlerBase : UIBehaviour,
+                                                   IPointerDownHandler, IPointerUpHandler,
+                                                   IPointerEnterHandler, IPointerExitHandler,
+                                                   ISelectHandler, IDeselectHandler
     {
-        [SerializeField] private Graphic targetGraphic;
-        [SerializeField] private ColorBlock colors = ColorBlock.defaultColorBlock;
-        
         private Button button;
         
         private bool enableCalled = false;
@@ -22,8 +16,13 @@ namespace Rehawk.Foundation.UI
         private bool isPointerInside;
         private bool isPointerDown;
         private bool hasSelection;
+
+        protected SelectionState PreviousSelectionState
+        {
+            get { return previousSelectionState; }
+        }
         
-        private SelectionState CurrentSelectionState
+        protected SelectionState CurrentSelectionState
         {
             get
             {
@@ -56,6 +55,23 @@ namespace Rehawk.Foundation.UI
             base.Awake();
             
             button = GetComponent<Button>();
+        }
+
+        protected override void OnValidate()
+        {
+            base.OnValidate();
+            
+            // OnValidate can be called before OnEnable, this makes it unsafe to access other components
+            // since they might not have been initialized yet.
+            if (isActiveAndEnabled)
+            {
+                if ((button == null || !button.IsInteractable()) && EventSystem.current != null && EventSystem.current.currentSelectedGameObject == gameObject)
+                {
+                    EventSystem.current.SetSelectedGameObject(null);
+                }
+
+                DoStateTransition(CurrentSelectionState, true);
+            }
         }
 
         protected override void OnEnable()
@@ -93,18 +109,6 @@ namespace Rehawk.Foundation.UI
             DoStateTransition(CurrentSelectionState, false);
         }
 
-        protected override void OnValidate()
-        {
-            base.OnValidate();
-            
-            colors.fadeDuration = Mathf.Max(colors.fadeDuration, 0.0f);
-            
-            if (isActiveAndEnabled)
-            {
-                StartColorTween(Color.white, true);
-            }
-        }
-
         private void DoInitialTransition()
         {
             if (EventSystem.current && EventSystem.current.currentSelectedGameObject == gameObject)
@@ -117,45 +121,15 @@ namespace Rehawk.Foundation.UI
 
         private void DoStateTransition(SelectionState state, bool instant)
         {
-            if (previousSelectionState == state)
+            if (PreviousSelectionState == state)
                 return;
 
             previousSelectionState = state;
-            
-            Color tintColor;
-            
-            switch (state)
-            {
-                case SelectionState.Normal:
-                    tintColor = colors.normalColor;
-                    break;
-                case SelectionState.Highlighted:
-                    tintColor = colors.highlightedColor;
-                    break;
-                case SelectionState.Pressed:
-                    tintColor = colors.pressedColor;
-                    break;
-                case SelectionState.Selected:
-                    tintColor = colors.selectedColor;
-                    break;
-                case SelectionState.Disabled:
-                    tintColor = colors.disabledColor;
-                    break;
-                default:
-                    tintColor = Color.black;
-                    break;
-            }
-            
-            StartColorTween(tintColor * colors.colorMultiplier, instant);
-        }
-        
-        private void StartColorTween(Color targetColor, bool instant)
-        {
-            if (targetGraphic == null)
-                return;
 
-            targetGraphic.CrossFadeColor(targetColor, instant ? 0f : colors.fadeDuration, true, true);
+            HandleStateTransition(state, instant);
         }
+
+        protected abstract void HandleStateTransition(SelectionState state, bool instant);
         
         private void EvaluateAndTransitionToSelectionState()
         {
@@ -207,7 +181,7 @@ namespace Rehawk.Foundation.UI
             EvaluateAndTransitionToSelectionState();
         }
         
-        private enum SelectionState
+        protected enum SelectionState
         {
             Normal,
             Highlighted,

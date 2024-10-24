@@ -43,7 +43,7 @@ namespace Rehawk.Foundation.Extensions
             return center + v * radius;
         }
         
-        public static float GetFlattenDistance(this Vector3 vector, Vector3 to)
+        public static float GetAirDistance(this Vector3 vector, Vector3 to)
         {
             return Mathf.Abs(Vector3.Distance(new Vector3(vector.x, 0, vector.z), new Vector3(to.x, 0, to.z)));
         }

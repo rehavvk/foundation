@@ -11,13 +11,13 @@ namespace Rehawk.Foundation.Assets
 {
     public static class AssetPostprocessorUtility
     {
-        public static void MakeIdUnique<T>(string[] importedAssets, string guidFieldName) where T : Object
+        public static void MakeScriptableObjectIdUnique<T>(string[] importedAssets, string idFieldName) where T : ScriptableObject
         {
             Type type = typeof(T);
             
             string projectPath = Path.GetDirectoryName(Application.dataPath);
 
-            FieldInfo guidFieldInfo = type.GetField(guidFieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+            FieldInfo guidFieldInfo = type.GetField(idFieldName, BindingFlags.Instance | BindingFlags.NonPublic);
 
             T[] objects = AssetHelper.FindAssetsOfType<T>();
 
@@ -71,8 +71,67 @@ namespace Rehawk.Foundation.Assets
                 }
             }
         }
+        
+        public static void MakeComponentIdUnique<T>(string[] importedAssets, string idFieldName, IReadOnlyList<T> allComponents) where T : MonoBehaviour
+        {
+            Type type = typeof(T);
 
-        public static void HandleDirectory<T, TDirectory>(string[] importedAssets, string directoryPath, string arrayFieldName) 
+            string projectPath = Path.GetDirectoryName(Application.dataPath);
+
+            FieldInfo guidFieldInfo = type.GetField(idFieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+
+            for (int i = 0; i < importedAssets.Length; i++)
+            {
+                var componentObject = AssetDatabase.LoadAssetAtPath<GameObject>(importedAssets[i]);
+
+                if (componentObject && componentObject.TryGetComponent(out T importedComponent))
+                {
+                    string importedGuid = guidFieldInfo.GetValue(importedComponent)?.ToString();
+
+                    if (string.IsNullOrEmpty(importedGuid))
+                    {
+                        guidFieldInfo.SetValue(importedComponent, Guid.NewGuid().ToString());
+                        EditorUtility.SetDirty(componentObject);
+                    }
+                    else
+                    {
+                        T componentWithSameGuid = allComponents.FirstOrDefault(component =>
+                        {
+                            if (component != importedComponent)
+                            {
+                                object guid = guidFieldInfo.GetValue(component);
+
+                                return guid.Equals(importedGuid);
+                            }
+                        
+                            return false;
+                        });
+                    
+                        if (componentWithSameGuid != null)
+                        {
+                            var importedCreationTime = File.GetCreationTimeUtc(importedAssets[i]);
+
+                            string pathToLoadedObject = Path.Combine(projectPath, AssetDatabase.GetAssetPath(componentWithSameGuid));
+                        
+                            var loadedCreationTime = File.GetCreationTimeUtc(pathToLoadedObject);
+
+                            if (importedCreationTime >= loadedCreationTime)
+                            {
+                                guidFieldInfo.SetValue(importedComponent, Guid.NewGuid().ToString());
+                                EditorUtility.SetDirty(importedComponent);
+                            }
+                            else
+                            {
+                                guidFieldInfo.SetValue(importedComponent, Guid.NewGuid().ToString());
+                                EditorUtility.SetDirty(componentWithSameGuid);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        public static void HandleScriptableObjectDirectory<T, TDirectory>(string[] importedAssets, string directoryPath, string arrayFieldName) 
             where T : Object 
             where TDirectory : ScriptableObject
         {
@@ -81,13 +140,7 @@ namespace Rehawk.Foundation.Assets
             
             FieldInfo arrayFieldInfo = directoryType.GetField(arrayFieldName, BindingFlags.Instance | BindingFlags.NonPublic);
             
-            var directory = AssetDatabase.LoadAssetAtPath<TDirectory>(directoryPath);
-            if (directory == null)
-            {
-                directory = ScriptableObject.CreateInstance<TDirectory>();
-                
-                AssetDatabase.CreateAsset(directory, directoryPath);
-            }
+            var directory = AssetHelper.LoadOrCreateAssetAtPath<TDirectory>(directoryPath);
 
             T[] array = (T[]) arrayFieldInfo.GetValue(directory);
             List<T> list = array?.ToList();
@@ -110,6 +163,44 @@ namespace Rehawk.Foundation.Assets
                     if (!list.Contains(importedObject))
                     {
                         list.Add(importedObject);
+                    }
+                }
+            }
+            
+            arrayFieldInfo.SetValue(directory, list.ToArray());
+            EditorUtility.SetDirty(directory);
+        }
+        
+        public static void HandleComponentDirectory<T, TDirectory>(string[] importedAssets, string directoryPath, string arrayFieldName) 
+            where T : Component 
+            where TDirectory : ScriptableObject
+        {
+            Type directoryType = typeof(TDirectory);
+            
+            FieldInfo arrayFieldInfo = directoryType.GetField(arrayFieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+
+            var directory = AssetHelper.LoadOrCreateAssetAtPath<TDirectory>(directoryPath);
+
+            T[] array = (T[]) arrayFieldInfo.GetValue(directory);
+            List<T> list = array?.ToList();
+
+            if (list == null)
+            {
+                list = new List<T>();
+            }
+            else
+            {
+                list.RemoveAll(e => e == null);
+            }
+            
+            for (int i = 0; i < importedAssets.Length; i++)
+            {
+                var entityObject = AssetDatabase.LoadAssetAtPath<GameObject>(importedAssets[i]);
+                if (entityObject && entityObject.TryGetComponent(out T component))
+                {
+                    if (!list.Contains(component))
+                    {
+                        list.Add(component);
                     }
                 }
             }

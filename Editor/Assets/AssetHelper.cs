@@ -14,16 +14,29 @@ namespace Rehawk.Foundation.Assets
             return AssetDatabase.LoadAssetAtPath<T>(AssetDatabase.GUIDToAssetPath(guid));
         }
         
+        public static T LoadOrCreateAssetAtPath<T>(string directoryPath) where T : ScriptableObject
+        {
+            var asset = AssetDatabase.LoadAssetAtPath<T>(directoryPath);
+            if (asset == null)
+            {
+                asset = ScriptableObject.CreateInstance<T>();
+                
+                AssetDatabase.CreateAsset(asset, directoryPath);
+            }
+
+            return asset;
+        }
+        
         public static T[] FindAssetsOfType<T>() where T : Object
         {
             string[] guids = AssetDatabase.FindAssets("t:" + typeof(T).Name);
             T[] a = new T[guids.Length];
-            for(int i =0;i<guids.Length;i++)
+            for (int i = 0; i < guids.Length; i++)
             {
                 string path = AssetDatabase.GUIDToAssetPath(guids[i]);
                 a[i] = AssetDatabase.LoadAssetAtPath<T>(path);
             }
- 
+
             return a;
         }
 
@@ -31,12 +44,12 @@ namespace Rehawk.Foundation.Assets
         {
             string[] guids = AssetDatabase.FindAssets("t:" + type.Name);
             var a = new Object[guids.Length];
-            for(int i =0;i<guids.Length;i++)
+            for (int i = 0; i < guids.Length; i++)
             {
                 string path = AssetDatabase.GUIDToAssetPath(guids[i]);
                 a[i] = AssetDatabase.LoadAssetAtPath(path, type);
             }
- 
+
             return a;
         }
 

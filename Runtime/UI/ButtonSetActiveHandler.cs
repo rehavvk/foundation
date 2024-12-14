@@ -8,6 +8,7 @@ namespace Rehawk.Foundation.UI
         [SerializeField] private GameObject targetObject;
         [SerializeField] private ObjectState objectState = ObjectState.DefaultObjectState;
         
+#if UNITY_EDITOR
         protected override void OnValidate()
         {
             if (isActiveAndEnabled)
@@ -17,7 +18,8 @@ namespace Rehawk.Foundation.UI
             
             base.OnValidate();
         }
-
+#endif
+        
         protected override void HandleStateTransition(SelectionState state, bool instant)
         {
             bool isActive;

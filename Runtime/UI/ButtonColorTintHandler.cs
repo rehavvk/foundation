@@ -8,6 +8,7 @@ namespace Rehawk.Foundation.UI
         [SerializeField] private Graphic targetGraphic;
         [SerializeField] private ColorBlock colors = ColorBlock.defaultColorBlock;
 
+#if UNITY_EDITOR
         protected override void OnValidate()
         {
             colors.fadeDuration = Mathf.Max(colors.fadeDuration, 0.0f);
@@ -19,6 +20,7 @@ namespace Rehawk.Foundation.UI
             
             base.OnValidate();
         }
+#endif
 
         protected override void HandleStateTransition(SelectionState state, bool instant)
         {

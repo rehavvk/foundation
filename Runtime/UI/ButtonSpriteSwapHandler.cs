@@ -14,6 +14,7 @@ namespace Rehawk.Foundation.UI
             set { targetGraphic = value; }
         }
         
+#if UNITY_EDITOR
         protected override void OnValidate()
         {
             if (isActiveAndEnabled)
@@ -23,7 +24,8 @@ namespace Rehawk.Foundation.UI
             
             base.OnValidate();
         }
-
+#endif
+        
         protected override void HandleStateTransition(SelectionState state, bool instant)
         {
             Sprite newSprite;

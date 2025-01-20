@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
+
+#if ODIN_INSPECTOR_3
+using Sirenix.OdinInspector;
+#endif
 
 namespace Rehawk.Foundation.Misc
 {
@@ -64,11 +67,13 @@ namespace Rehawk.Foundation.Misc
     [InlineProperty]
     public class WeightedSet<T>
     {
+#if ODIN_INSPECTOR_3
         [OnValueChanged(nameof(PrecalculateTotalChance), true), LabelText(" ")]
+#endif
         [SerializeField] private WeightedRef<T>[] references = Array.Empty<WeightedRef<T>>();
 
         [HideInInspector]
-        [SerializeField] private float totalChance;
+        [SerializeField] private float totalChance = -1;
 
         public int Count
         {
@@ -82,6 +87,8 @@ namespace Rehawk.Foundation.Misc
         
         public T GetRandom()
         {
+            PrecalculateTotalChanceIfNeeded();
+            
             float randomValue = Random.Range(0, totalChance);
             WeightedRef<T> reference = WeightedSet.GetRandom(references, randomValue);
             
@@ -90,6 +97,8 @@ namespace Rehawk.Foundation.Misc
         
         public T GetRandom(System.Random random)
         {
+            PrecalculateTotalChanceIfNeeded();
+
             float randomValue = (float)random.NextDouble() * totalChance;
             WeightedRef<T> reference = WeightedSet.GetRandom(references, randomValue);
             
@@ -130,6 +139,14 @@ namespace Rehawk.Foundation.Misc
         private void PrecalculateTotalChance()
         {
             totalChance = WeightedSet.CalculateTotalChance(references);
+        }
+
+        private void PrecalculateTotalChanceIfNeeded()
+        {
+            if (totalChance >= 0)
+                return;
+            
+            PrecalculateTotalChance();
         }
     }
 

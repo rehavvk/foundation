@@ -57,6 +57,7 @@ namespace Rehawk.Foundation.UI
             button = GetComponent<Button>();
         }
 
+#if UNITY_EDITOR
         protected override void OnValidate()
         {
             base.OnValidate();
@@ -73,7 +74,8 @@ namespace Rehawk.Foundation.UI
                 DoStateTransition(CurrentSelectionState, true);
             }
         }
-
+#endif
+        
         protected override void OnEnable()
         {
             if (enableCalled)

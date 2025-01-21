@@ -22,12 +22,17 @@ namespace Rehawk.Foundation.Misc
             }
         }
         
-        public void Init(Transform parent, Vector3 localPosition, Quaternion localRotation)
+        public void InitLocal(Transform parent, Vector3 localPosition, Quaternion localRotation)
         {
             this.parent = parent;
             this.localPosition = localPosition;
             this.localRotation = localRotation;
             enabled = true;
+        }
+        
+        public void InitWorld(Transform parent, Vector3 position, Quaternion rotation)
+        {
+            InitLocal(parent, parent.InverseTransformPoint(position), rotation * Quaternion.Inverse(parent.rotation));
         }
     }
 }

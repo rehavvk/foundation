@@ -43,7 +43,7 @@ namespace Rehawk.Foundation.GameObjectPooling
             {
                 if (item.TryGetComponent(out ParentConstraint constraint))
                 {
-                    constraint.Init(parent, item.transform.position, item.transform.rotation);
+                    constraint.InitWorld(parent, item.transform.position, item.transform.rotation);
                 }
                 else
                 {

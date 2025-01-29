@@ -1,12 +1,25 @@
 ﻿// SOURCE: https://gist.github.com/RiskyWilhelm/7c7d3dccc212476d065a86641b7ae419
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Rehawk.Foundation.Misc;
 
 namespace Rehawk.Foundation.Extensions
 {
     public static class EnumExtensions
     {
+	    public static IEnumerable<EnumType> GetFlags<EnumType>(this EnumType value)
+		    where EnumType : Enum
+	    {
+		    EnumUtility.ValidateFlagEnum<EnumType>();
+		    foreach (EnumType flag in Enum.GetValues(typeof(EnumType)).Cast<EnumType>())
+		    {
+			    if (value.HasFlag(flag))
+				    yield return flag;
+		    }
+	    }
+	    
         /// <summary> Checks if enum 'a' contains any of the value(s) from 'b' </summary>
 		public static bool HasAny<EnumType>(this EnumType a, EnumType b)
 			where EnumType : Enum

@@ -7,11 +7,13 @@ namespace Rehawk.Foundation.FeatureFlags
     public class FeatureFlagEditor : Editor
     {
         private SerializedProperty uidProperty;
+        private SerializedProperty titleProperty;
         private SerializedProperty defaultValueProperty;
     
         private void OnEnable()
         {
             uidProperty = serializedObject.FindProperty("uid");
+            titleProperty = serializedObject.FindProperty("title");
             defaultValueProperty = serializedObject.FindProperty("defaultValue");
         }
         
@@ -28,6 +30,7 @@ namespace Rehawk.Foundation.FeatureFlags
             }
             EditorGUI.EndDisabledGroup();
             
+            EditorGUILayout.PropertyField(titleProperty);
             EditorGUILayout.PropertyField(defaultValueProperty);
 
             EditorGUI.BeginChangeCheck();

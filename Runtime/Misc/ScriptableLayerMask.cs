@@ -2,7 +2,7 @@
 
 namespace Rehawk.Foundation.Misc
 {
-    [CreateAssetMenu(menuName = "Scriptable LayerMask", order = 800)]
+    [CreateAssetMenu(menuName = "Foundation/Scriptable LayerMask", order = 800)]
     public class ScriptableLayerMask : ScriptableObject
     {
         [SerializeField] private LayerMask mask;

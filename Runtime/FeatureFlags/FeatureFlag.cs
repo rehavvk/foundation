@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Rehawk.Foundation.FeatureFlags
 {
@@ -9,6 +8,8 @@ namespace Rehawk.Foundation.FeatureFlags
     public class FeatureFlag : ScriptableObject
     {
         [SerializeField] private string uid;
+
+        [SerializeField] private string title;
         [SerializeField] private bool defaultValue;
 
         public event FeatureFlagChangedDelegate Changed;
@@ -16,6 +17,11 @@ namespace Rehawk.Foundation.FeatureFlags
         public string Uid
         {
             get { return uid; }
+        }
+
+        public string Title
+        {
+            get { return !string.IsNullOrEmpty(title) ? title : name; }
         }
         
         public bool Value

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Rehawk.Foundation.Entities
@@ -34,6 +35,11 @@ namespace Rehawk.Foundation.Entities
         public static IEnumerable<Entity> WithComponent<T>(this IEnumerable<Entity> query)
         {
             return query.Where(e => e.HasComponent<T>());
+        }
+        
+        public static IEnumerable<Entity> WithComponent<T>(this IEnumerable<Entity> query, Predicate<T> predicate)
+        {
+            return query.Where(e => e.TryGetComponent<T>(out T component) && predicate.Invoke(component));
         }
     }
 }

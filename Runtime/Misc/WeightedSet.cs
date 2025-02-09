@@ -153,10 +153,19 @@ namespace Rehawk.Foundation.Misc
     [Serializable]
     public class WeightedRef<T>
     {
+#if ODIN_INSPECTOR_3
         [HorizontalGroup("Values"), HideLabel, FormerlySerializedAs("value")]
+#endif
         public T Value;
         
-        [HorizontalGroup("Values"), Range(0, 1), HideLabel, SuffixLabel("%"), FormerlySerializedAs("chance")]
-        public float Chance;
+#if ODIN_INSPECTOR_3
+        [HorizontalGroup("Values"), Range(0, 100), HideLabel, SuffixLabel("%"), FormerlySerializedAs("Chance")]
+#endif
+        [SerializeField] private float chance = 100;
+
+        public float Chance
+        {
+            get { return chance / 100; }
+        }
     }
 }

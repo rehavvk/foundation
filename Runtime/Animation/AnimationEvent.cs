@@ -2,6 +2,6 @@
 
 namespace Rehawk.Foundation.Animation
 {
-    [CreateAssetMenu(menuName = "Animation Event", order = 800)]
+    [CreateAssetMenu(menuName = "Foundation/Animation Event", order = 800)]
     public class AnimationEvent : ScriptableObject {}
 }

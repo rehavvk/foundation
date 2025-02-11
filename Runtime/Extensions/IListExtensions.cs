@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Random = UnityEngine.Random;
 
 namespace Rehawk.Foundation.Extensions
 {
@@ -8,7 +7,26 @@ namespace Rehawk.Foundation.Extensions
     {
         public static T GetRandom<T>(this IList<T> list)
         {
-            return list[Random.Range(0, list.Count)];
+            int index = UnityEngine.Random.Range(0, list.Count);
+
+            if (list.TryGetValue(index, out T result))
+            {
+                return result;
+            }
+            
+            return default;
+        }
+        
+        public static T GetRandom<T>(this IList<T> list, Random random)
+        {
+            int index = random.Next(0, list.Count);
+
+            if (list.TryGetValue(index, out T result))
+            {
+                return result;
+            }
+            
+            return default;
         }
         
         public static T GetNext<T>(this IList<T> list, T element)

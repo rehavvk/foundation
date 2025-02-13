@@ -10,9 +10,19 @@ namespace Rehawk.Foundation.Extensions
             return Random.Range(vector.x, vector.y);
         }
         
+        public static float GetRandom(this Vector2 vector, System.Random random)
+        {
+            return random.Range(vector.x, vector.y);
+        }
+
         public static int GetRandom(this Vector2Int vector)
         {
             return Random.Range(vector.x, vector.y);
+        }
+        
+        public static int GetRandom(this Vector2Int vector, System.Random random)
+        {
+            return random.Next(vector.x, vector.y);
         }
         
         public static Vector3 GetClosestPointOnFiniteLine(this Vector3 point, Vector3 start, Vector3 end)

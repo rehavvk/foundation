@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Rehawk.Foundation.Extensions;
 
 namespace Rehawk.Foundation.Misc
 {

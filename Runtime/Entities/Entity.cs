@@ -266,6 +266,9 @@ namespace Rehawk.Foundation.Entities
 
         private void UpdateVisibility()
         {
+            if (visibilityRoot == null)
+                return;
+            
             visibilityRoot.gameObject.SetActive(IsActivated && !IsInvisible);
         }
         

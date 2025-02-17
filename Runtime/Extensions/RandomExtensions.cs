@@ -5,7 +5,7 @@ namespace Rehawk.Foundation.Extensions
 {
     public static class RandomExtensions
     {
-        public static float Range(this System.Random random, float min, float max)
+        public static float NextFloat(this System.Random random, float min, float max)
         {
             return (float)random.NextDouble() * (max - min) + min;
         }
@@ -27,7 +27,7 @@ namespace Rehawk.Foundation.Extensions
 
         public static Vector3 GetRandomVector(this System.Random random, Vector3 minVector, Vector3 maxVector)
         {
-            return new Vector3(random.Range(minVector.x, maxVector.x), random.Range(minVector.y, maxVector.y), random.Range(minVector.z, maxVector.z));
+            return new Vector3(random.NextFloat(minVector.x, maxVector.x), random.NextFloat(minVector.y, maxVector.y), random.NextFloat(minVector.z, maxVector.z));
         }
 
         public static int GetRandomSign(this System.Random random)
@@ -37,7 +37,7 @@ namespace Rehawk.Foundation.Extensions
 
         public static Vector3 GetRandomVector(this System.Random random, float min, float max)
         {
-            return new Vector3(random.Range(min, max), random.Range(min, max), random.Range(min, max));
+            return new Vector3(random.NextFloat(min, max), random.NextFloat(min, max), random.NextFloat(min, max));
         }
         
         public static Vector3 GetRandomPointInUnitSphere(this System.Random random)

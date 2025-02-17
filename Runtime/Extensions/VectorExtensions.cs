@@ -12,7 +12,7 @@ namespace Rehawk.Foundation.Extensions
         
         public static float GetRandom(this Vector2 vector, System.Random random)
         {
-            return random.Range(vector.x, vector.y);
+            return random.NextFloat(vector.x, vector.y);
         }
 
         public static int GetRandom(this Vector2Int vector)

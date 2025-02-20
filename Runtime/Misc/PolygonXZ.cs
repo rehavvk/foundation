@@ -73,17 +73,6 @@ namespace Rehawk.Foundation.Misc
             return Vector3.zero;
         }
 
-        public void SmoothPolygon(int iterations)
-        {
-            Points = SmoothPolygonChaikin(Points, iterations);
-        }
-
-        [ContextMenu("Smooth")]
-        private void SmoothPolygon()
-        {
-            SmoothPolygon(1);
-        }
-
         public static bool Contains(Vector3 point, Vector3[] points)
         {
             var point2D = new Vector2(point.x, point.z);

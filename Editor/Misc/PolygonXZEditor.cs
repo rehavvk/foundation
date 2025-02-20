@@ -140,5 +140,14 @@ namespace Rehawk.Foundation.Misc
                 e.Use();
             }
         }
+        
+        [MenuItem("CONTEXT/PolygonXZ/Smooth")]
+        private static void SmoothPolygon(MenuCommand command)
+        {
+            PolygonXZ polygon = (PolygonXZ) command.context;
+            Undo.RecordObject(polygon, "Smooth Polygon");
+            polygon.Points = PolygonXZ.SmoothPolygonChaikin(polygon.Points, 1);
+            EditorUtility.SetDirty(polygon);
+        }
     }
 }

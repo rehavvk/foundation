@@ -120,7 +120,7 @@ namespace Rehawk.Foundation.Assets
             }
             else
             {
-                list.RemoveAll(e => e.Equals(default(TResult)));
+                list.RemoveAll(e => e.Equals(null));
             }
             
             for (int i = 0; i < importedAssets.Length; i++)
@@ -145,13 +145,6 @@ namespace Rehawk.Foundation.Assets
             
             arrayFieldInfo.SetValue(directory, list.ToArray());
             EditorUtility.SetDirty(directory);
-        }
-        
-        public static void HandleComponentDirectory<T, TDirectory>(string[] importedAssets, string directoryPath, string arrayFieldName) 
-            where T : Component
-            where TDirectory : ScriptableObject
-        {
-            HandleComponentDirectory<T, T, TDirectory>(importedAssets, directoryPath, arrayFieldName);
         }
         
         public static void HandleComponentDirectory<TSource, TResult, TDirectory>(string[] importedAssets, string directoryPath, string arrayFieldName, Func<TSource, TResult> converter = null) 
@@ -191,6 +184,56 @@ namespace Rehawk.Foundation.Assets
                     if (converter != null)
                     {
                         objToAdd = converter.Invoke(component);
+                    }
+
+                    if (!list.Contains(objToAdd))
+                    {
+                        list.Add(objToAdd);
+                    }
+                }
+            }
+            
+            arrayFieldInfo.SetValue(directory, list.ToArray());
+            EditorUtility.SetDirty(directory);
+        }
+        
+        public static void HandleComponentDirectory<TSource, TResult, TDirectory>(string[] importedAssets, string directoryPath, string arrayFieldName, Func<TDirectory, TSource, TResult> converter = null) 
+            where TSource : Component 
+            where TDirectory : ScriptableObject
+        {
+            Type directoryType = typeof(TDirectory);
+            
+            FieldInfo arrayFieldInfo = directoryType.GetField(arrayFieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+
+            var directory = AssetHelper.LoadOrCreateAssetAtPath<TDirectory>(directoryPath);
+
+            TResult[] array = (TResult[]) arrayFieldInfo.GetValue(directory);
+            List<TResult> list = array?.ToList();
+
+            if (list == null)
+            {
+                list = new List<TResult>();
+            }
+            else
+            {
+                list.RemoveAll(e => e.Equals(default(TResult)));
+            }
+            
+            for (int i = 0; i < importedAssets.Length; i++)
+            {
+                var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(importedAssets[i]);
+                if (prefab && prefab.TryGetComponent(out TSource component))
+                {
+                    TResult objToAdd = default;
+
+                    if (component is TResult result)
+                    {
+                        objToAdd = result;
+                    }
+                    
+                    if (converter != null)
+                    {
+                        objToAdd = converter.Invoke(directory, component);
                     }
 
                     if (!list.Contains(objToAdd))

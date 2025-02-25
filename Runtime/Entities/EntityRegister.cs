@@ -11,7 +11,7 @@ namespace Rehawk.Foundation.Entities
         public static event Action<Entity> EntityAdded;
         public static event Action<Entity> EntityRemoved;
 
-        public static IEnumerable<Entity> Entities
+        public static IReadOnlyList<Entity> Entities
         {
             get { return allEntities; }
         }

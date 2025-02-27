@@ -38,6 +38,9 @@ namespace Rehawk.Foundation.SceneHistory
 
         private static void OnActiveSceneChanged(Scene previousScene, Scene newScene)
         {
+            if (newScene.buildIndex == -1)
+                return;
+            
             history.Add(new SceneHistoryRecord
             {
                 SceneName = newScene.name,

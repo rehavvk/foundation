@@ -15,6 +15,11 @@ namespace Rehawk.Foundation.Extensions
             return random.Next(0, 2) == 0;
         }
 
+        public static bool Probability(this System.Random random, float probability)
+        {
+            return random.NextFloat(0, 1) < probability;
+        }
+
         public static int GetRandomSign(this System.Random random)
         {
             return (int)Mathf.Sign(random.Next(-1, 1));

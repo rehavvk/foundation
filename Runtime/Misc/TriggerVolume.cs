@@ -9,8 +9,8 @@ namespace Rehawk.Foundation.Misc
     {
         [SerializeField] private bool onlyUniqueRigidbodies = true;
         
-        private readonly HashSet<Collider> detectedColliders = new HashSet<Collider>();
-        private readonly HashSet<Rigidbody> detectedRigidbodies = new HashSet<Rigidbody>();
+        private readonly List<Collider> detectedColliders = new List<Collider>();
+        private readonly List<Rigidbody> detectedRigidbodies = new List<Rigidbody>();
 
         public event Action<Collider> Entered;
         public event Action<Collider> Left;
@@ -20,7 +20,7 @@ namespace Rehawk.Foundation.Misc
             get { return detectedColliders.Count; }
         }
 
-        public IReadOnlyCollection<Collider> DetectedColliders
+        public IReadOnlyList<Collider> DetectedColliders
         {
             get { return detectedColliders; }
         }
@@ -29,12 +29,15 @@ namespace Rehawk.Foundation.Misc
         {
             if (onlyUniqueRigidbodies)
             {
-                if (!detectedRigidbodies.Add(other.attachedRigidbody))
+                if (detectedRigidbodies.Contains(other.attachedRigidbody))
                     return;
+
+                detectedRigidbodies.Add(other.attachedRigidbody);
             }
 
-            if (detectedColliders.Add(other))
+            if (!detectedColliders.Contains(other))
             {
+                detectedColliders.Add(other);
                 other.AddDisableListener(OnOtherDisabled);
                 Entered?.Invoke(other);
             }

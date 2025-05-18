@@ -74,6 +74,8 @@ namespace Rehawk.Foundation.GameObjectPooling
 
 #if UNITY_EDITOR
             item.transform.SetParent(parentForInactiveEffects);
+#else
+            item.transform.SetParent(null);
 #endif
             
             pooledGameObject.OnReturn();

@@ -57,5 +57,12 @@ namespace Rehawk.Foundation.Extensions
         {
             return Mathf.Abs(Vector3.Distance(new Vector3(vector.x, 0, vector.z), new Vector3(to.x, 0, to.z)));
         }
+        
+        public static Vector3 InverseScale(this Vector3 vector, Vector3 scale)
+        {
+            return new Vector3(scale.x != 0 ? vector.x / scale.x : 0,
+                               scale.y != 0 ? vector.y / scale.y : 0,
+                               scale.z != 0 ? vector.z / scale.z : 0);
+        }
     }
 }

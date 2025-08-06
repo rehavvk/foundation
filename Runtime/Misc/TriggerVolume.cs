@@ -9,8 +9,8 @@ namespace Rehawk.Foundation.Misc
     {
         [SerializeField] private bool onlyUniqueRigidbodies = true;
         
-        private readonly List<Collider> detectedColliders = new List<Collider>();
-        private readonly List<Rigidbody> detectedRigidbodies = new List<Rigidbody>();
+        private List<Collider> detectedColliders = new List<Collider>();
+        private List<Rigidbody> detectedRigidbodies = new List<Rigidbody>();
 
         public event Action<Collider> Entered;
         public event Action<Collider> Left;

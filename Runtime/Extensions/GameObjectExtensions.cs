@@ -45,5 +45,22 @@ namespace Rehawk.Foundation.Extensions
         {
             gameObject.GetOrAddComponent<EventBeforeDisable>().BeforeDisabled -= listener;
         }
+        
+        public static Bounds CalculateRendererBounds(this GameObject gameObject)
+        {
+            Renderer[] renderers = gameObject.GetComponentsInChildren<Renderer>();
+
+            if (renderers.Length == 0)
+                return new Bounds(gameObject.transform.position, Vector3.zero);
+
+            Bounds combinedBounds = renderers[0].bounds;
+
+            for (int i = 1; i < renderers.Length; i++)
+            {
+                combinedBounds.Encapsulate(renderers[i].bounds);
+            }
+
+            return combinedBounds;
+        }
     }
 }

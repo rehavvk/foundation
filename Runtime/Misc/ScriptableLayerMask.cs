@@ -14,12 +14,12 @@ namespace Rehawk.Foundation.Misc
         
         public static implicit operator LayerMask(ScriptableLayerMask scriptableLayerMask)
         {
-            return scriptableLayerMask.Mask;
+            return scriptableLayerMask ? scriptableLayerMask.Mask : default;
         }
         
         public static implicit operator int(ScriptableLayerMask scriptableLayerMask)
         {
-            return scriptableLayerMask.Mask;
+            return scriptableLayerMask ? scriptableLayerMask.Mask : default;
         }
     }
 }

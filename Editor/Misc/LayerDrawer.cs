@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Rehawk.Foundation.Misc
 {
     [CustomPropertyDrawer(typeof(LayerAttribute))]
-    public class LayerAttributeDrawer : PropertyDrawer
+    public class LayerDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {

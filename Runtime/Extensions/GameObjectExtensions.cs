@@ -1,6 +1,7 @@
 ﻿using System;
 using Rehawk.Foundation.Misc;
 using UnityEngine;
+using UnityEngine.VFX;
 
 namespace Rehawk.Foundation.Extensions
 {
@@ -50,17 +51,33 @@ namespace Rehawk.Foundation.Extensions
         {
             Renderer[] renderers = gameObject.GetComponentsInChildren<Renderer>();
 
-            if (renderers.Length == 0)
-                return new Bounds(gameObject.transform.position, Vector3.zero);
-
-            Bounds combinedBounds = renderers[0].bounds;
+            Bounds combinedBounds;
+            
+            if (renderers.Length == 0 || !IsBoundsRenderer(renderers[0]))
+            {
+                combinedBounds = new Bounds(gameObject.transform.position, Vector3.zero);
+            }
+            else
+            {
+                combinedBounds = renderers[0].bounds;
+            }
 
             for (int i = 1; i < renderers.Length; i++)
             {
-                combinedBounds.Encapsulate(renderers[i].bounds);
+                Renderer renderer = renderers[i];
+                
+                if (!IsBoundsRenderer(renderer))
+                    continue;
+                
+                combinedBounds.Encapsulate(renderer.bounds);
             }
 
             return combinedBounds;
+        }
+
+        private static bool IsBoundsRenderer(Renderer renderer)
+        {
+            return renderer is not ParticleSystemRenderer && renderer is not VFXRenderer;
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Rehawk.Foundation.Misc
 {
-    public class ParentConstraint : MonoBehaviour
+    public class CustomParentConstraint : MonoBehaviour
     {
         [Disabled]
         [SerializeField] private Transform parent;

@@ -16,7 +16,7 @@ namespace Rehawk.Foundation.Misc
 
         public bool Contains(object key)
         {
-            return keys.Contains(keys);
+            return keys.Contains(key);
         }
         
         public void Add(object key)

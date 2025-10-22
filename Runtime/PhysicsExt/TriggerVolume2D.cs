@@ -5,30 +5,30 @@ using UnityEngine;
 
 namespace Rehawk.Foundation.Misc
 {
-    public class TriggerVolume : MonoBehaviour
+    public class TriggerVolume2D : MonoBehaviour
     {
-        private List<Rigidbody> detectedRigidbodies = new List<Rigidbody>();
+        private List<Rigidbody2D> detectedRigidbodies = new List<Rigidbody2D>();
         
         private bool isQuitting;
-
-        private readonly Dictionary<Rigidbody, int> rigidbodyCounts = new Dictionary<Rigidbody, int>();
         
-        public event Action<Rigidbody> Entered;
-        public event Action<Rigidbody> Left;
+        private readonly Dictionary<Rigidbody2D, int> rigidbodyCounts = new Dictionary<Rigidbody2D, int>();
+        
+        public event Action<Rigidbody2D> Entered;
+        public event Action<Rigidbody2D> Left;
 
         public int Count => detectedRigidbodies.Count;
 
-        public IReadOnlyList<Rigidbody> DetectedRigidbodies => detectedRigidbodies;
+        public IReadOnlyList<Rigidbody2D> DetectedRigidbodies => detectedRigidbodies;
 
         private void OnApplicationQuit()
         {
             isQuitting = true;
-
+            
             rigidbodyCounts.Clear();
             detectedRigidbodies.Clear();
         }
 
-        public void HandleEnter(Rigidbody rigidbody)
+        public void HandleEnter(Rigidbody2D rigidbody)
         {
             if (isQuitting || !rigidbody || !gameObject || !gameObject.activeInHierarchy)
                 return;
@@ -47,11 +47,11 @@ namespace Rehawk.Foundation.Misc
             Entered?.Invoke(rigidbody);
         }
         
-        public void HandleLeft(Rigidbody rigidbody)
+        public void HandleLeft(Rigidbody2D rigidbody)
         {
             if (isQuitting || !rigidbody || !gameObject || !gameObject.activeInHierarchy)
                 return;
-
+            
             int count = rigidbodyCounts.GetValueOrDefault(rigidbody, 0);
             
             if (count <= 0) 
@@ -72,19 +72,19 @@ namespace Rehawk.Foundation.Misc
             Left?.Invoke(rigidbody);
         }
         
-        private void OnTriggerEnter(Collider other)
+        private void OnTriggerEnter2D(Collider2D other)
         {
             HandleEnter(other.attachedRigidbody);
         }
 
-        private void OnTriggerExit(Collider other)
+        private void OnTriggerExit2D(Collider2D other)
         {
             HandleLeft(other.attachedRigidbody);
         }
         
         private void OnOtherDisabled(GameObject other)
         {
-            HandleLeft(other.GetComponent<Rigidbody>());
+            HandleLeft(other.GetComponent<Rigidbody2D>());
         }
     }
 }

@@ -8,10 +8,16 @@ namespace Rehawk.Foundation.UI
         [SerializeField] private Graphic targetGraphic;
         [SerializeField] private SpriteState spriteState;
         
+#if UNITY_EDITOR
+        [Space]
+
+        [SerializeField] private SelectionState previewState = SelectionState.Normal;
+#endif
+        
         private Image Image
         {
-            get { return targetGraphic as Image; }
-            set { targetGraphic = value; }
+            get => targetGraphic as Image;
+            set => targetGraphic = value;
         }
         
 #if UNITY_EDITOR
@@ -22,42 +28,43 @@ namespace Rehawk.Foundation.UI
                 DoSpriteSwap(null);
             }
             
+            if (!Application.isPlaying && Image != null)
+            {
+                ApplyPreviewSprite();
+            }
+            
             base.OnValidate();
         }
 #endif
         
         protected override void HandleStateTransition(SelectionState state, bool instant)
         {
-            Sprite newSprite;
-            
-            switch (state)
-            {
-                case SelectionState.Normal:
-                    newSprite = null;
-                    break;
-                case SelectionState.Highlighted:
-                    newSprite = spriteState.highlightedSprite;
-                    break;
-                case SelectionState.Pressed:
-                    newSprite = spriteState.pressedSprite;
-                    break;
-                case SelectionState.Selected:
-                    newSprite = spriteState.selectedSprite;
-                    break;
-                case SelectionState.Disabled:
-                    newSprite = spriteState.disabledSprite;
-                    break;
-                default:
-                    newSprite = null;
-                    break;
-            }
-            
+            Sprite newSprite = GetSpriteForState(state);
             DoSpriteSwap(newSprite);
+        }
+        
+        private Sprite GetSpriteForState(SelectionState state)
+        {
+            return state switch
+            {
+                SelectionState.Normal => null,
+                SelectionState.Highlighted => spriteState.highlightedSprite,
+                SelectionState.Pressed => spriteState.pressedSprite,
+                SelectionState.Selected => spriteState.selectedSprite,
+                SelectionState.Disabled => spriteState.disabledSprite,
+                _ => null
+            };
+        }
+        
+        private void ApplyPreviewSprite()
+        {
+            Sprite sprite = GetSpriteForState(previewState);
+            DoSpriteSwap(sprite);
         }
         
         private void DoSpriteSwap(Sprite newSprite)
         {
-            if (Image == null)
+            if (!Image)
                 return;
 
             Image.overrideSprite = newSprite;

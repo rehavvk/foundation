@@ -37,18 +37,16 @@ namespace Rehawk.Foundation.Extensions
             return component.gameObject.AddComponent(type);
         }
 
-        public static T TryGetComponentInParent<T>(this Component component, out T result) 
-            where T : Component
+        public static bool TryGetComponentInParent<T>(this Component component, out T result)
         {
             result = component.GetComponentInParent<T>();
-            return result;
+            return result != null;
         }
 
-        public static T TryGetComponentInChildren<T>(this Component component, out T result) 
-            where T : Component
+        public static bool TryGetComponentInChildren<T>(this Component component, out T result) 
         {
             result = component.GetComponentInChildren<T>();
-            return result;
+            return result != null;
         }
 
         public static void AddDisableListener(this Component component, Action<GameObject> listener)

@@ -35,7 +35,7 @@ namespace Rehawk.Foundation.UI
 
         protected override void HandleStateTransition(SelectionState state, bool instant)
         {
-            Color tintColor = GetColorForState(previewState);
+            Color tintColor = GetColorForState(state);
             StartColorTween(tintColor, instant);
         }
         

@@ -56,11 +56,13 @@ namespace Rehawk.Foundation.UI
             };
         }
         
+#if UNITY_EDITOR
         private void ApplyPreviewSprite()
         {
             Sprite sprite = GetSpriteForState(previewState);
             DoSpriteSwap(sprite);
         }
+#endif
         
         private void DoSpriteSwap(Sprite newSprite)
         {

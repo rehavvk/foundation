@@ -5,6 +5,24 @@ namespace Rehawk.Foundation.Extensions
 {
     public static class IListExtensions
     {
+        public static void Shuffle<T>(this IList<T> list)
+        {
+            for (int i = list.Count - 1; i > 0; i--)
+            {
+                int j = UnityEngine.Random.Range(0, i + 1);
+                (list[i], list[j]) = (list[j], list[i]);
+            }
+        }
+        
+        public static void Shuffle<T>(this IList<T> list, Random random)
+        {
+            for (int i = list.Count - 1; i > 0; i--)
+            {
+                int j = random.Next(0, i + 1);
+                (list[i], list[j]) = (list[j], list[i]);
+            }
+        }
+        
         public static T GetRandom<T>(this IReadOnlyList<T> list)
         {
             int index = UnityEngine.Random.Range(0, list.Count);

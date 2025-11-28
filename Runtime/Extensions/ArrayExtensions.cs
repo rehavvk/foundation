@@ -1,4 +1,4 @@
-﻿using Random = UnityEngine.Random;
+﻿using System;
 
 namespace Rehawk.Foundation.Extensions
 {
@@ -6,15 +6,22 @@ namespace Rehawk.Foundation.Extensions
     {
         public static void Shuffle<T>(this T[] array)
         {
-            for (int t = 0; t < array.Length; t++ )
+            for (int i = array.Length - 1; i > 0; i--)
             {
-                T tmp = array[t];
-                int r = Random.Range(t, array.Length);
-                array[t] = array[r];
-                array[r] = tmp;
+                int j = UnityEngine.Random.Range(0, i + 1);
+                (array[i], array[j]) = (array[j], array[i]);
             }
         }
         
+        public static void Shuffle<T>(this T[] array, Random random)
+        {
+            for (int i = array.Length - 1; i > 0; i--)
+            {
+                int j = random.Next(0, i + 1);
+                (array[i], array[j]) = (array[j], array[i]);
+            }
+        }
+
         public static bool HasIndex<T>(this T[] array, int index)
         {
             return index >= 0 && index < array.Length;

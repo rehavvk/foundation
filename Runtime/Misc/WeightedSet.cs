@@ -64,7 +64,9 @@ namespace Rehawk.Foundation.Misc
     }
     
     [Serializable]
+#if ODIN_INSPECTOR_3
     [InlineProperty]
+#endif
     public class WeightedSet<T>
     {
 #if ODIN_INSPECTOR_3

@@ -1,5 +1,3 @@
-﻿// SOURCE: https://discussions.unity.com/t/a-different-requirecomponent/663125
-
 using UnityEditor;
 using UnityEngine;
 
@@ -11,29 +9,42 @@ namespace Rehawk.Foundation.Misc
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             EditorGUI.PropertyField(position, property);
-            
-            if (property.serializedObject.isEditingMultipleObjects)
+
+            if (fieldInfo == null || !typeof(Component).IsAssignableFrom(fieldInfo.FieldType))
                 return;
-            
-            var monoBehaviour = (MonoBehaviour) property.serializedObject.targetObject;
-            
-            if (typeof(Component).IsAssignableFrom(fieldInfo.FieldType))
+
+            Object[] targets = property.serializedObject.targetObjects;
+            if (targets == null || targets.Length == 0)
+                return;
+
+            var ownerComponents = new System.Collections.Generic.List<Component>(targets.Length);
+            var seenInstanceIds = new System.Collections.Generic.HashSet<int>();
+            for (int i = 0; i < targets.Length; i++)
+                GetComponentDrawerUtility.CollectOwnerComponents(targets[i], ownerComponents, seenInstanceIds);
+
+            if (ownerComponents.Count == 0)
+                return;
+
+            bool fromParents = attribute is GetComponentAttribute getComponentAttribute && getComponentAttribute.FromParents;
+            for (int i = 0; i < ownerComponents.Count; i++)
             {
-                if (property.objectReferenceValue == null)
-                {
-                    if (attribute is GetComponentAttribute getComponentAttribute && getComponentAttribute.FromParents)
-                    {
-                        property.objectReferenceValue = monoBehaviour.GetComponentInParent(fieldInfo.FieldType);
-                    }
-                    else
-                    {
-                        property.objectReferenceValue = monoBehaviour.GetComponentInChildren(fieldInfo.FieldType);
-                    }
-                }
-            }
-            else
-            {
-                Debug.LogError($"Field <b>{fieldInfo.Name}</b> of {monoBehaviour.GetType()} is not a component!", monoBehaviour);
+                Component ownerComponent = ownerComponents[i];
+                if (!fieldInfo.DeclaringType.IsInstanceOfType(ownerComponent))
+                    continue;
+
+                if (fieldInfo.GetValue(ownerComponent) != null)
+                    continue;
+
+                Component assigned = fromParents
+                    ? ownerComponent.GetComponentInParent(fieldInfo.FieldType)
+                    : ownerComponent.GetComponentInChildren(fieldInfo.FieldType);
+
+                if (!assigned)
+                    continue;
+
+                Undo.RecordObject(ownerComponent, "Auto Assign Component");
+                fieldInfo.SetValue(ownerComponent, assigned);
+                EditorUtility.SetDirty(ownerComponent);
             }
         }
     }

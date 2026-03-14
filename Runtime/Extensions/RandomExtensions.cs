@@ -71,7 +71,7 @@ namespace Rehawk.Foundation.Extensions
             //Inverse of sphere volume growth curve (3/4PI * r^3)
             double w = Math.Pow(u, (double) 1 / 3);
 
-            Vector3 direction = GetNormalizedDirection3(random);
+            Vector3 direction = random.GetNormalizedDirection3();
 
             return direction * (float) w;
         }
@@ -81,9 +81,15 @@ namespace Rehawk.Foundation.Extensions
             double u = random.NextDouble();
             double w = Math.Sqrt(u);
 
-            Vector3 direction = GetNormalizedDirection2(random);
+            Vector3 direction = random.GetNormalizedDirection2();
 
             return direction * (float) w;
+        }
+
+        public static Vector2 GetRandomPointOnUnitCircle(this System.Random random)
+        {
+            float angle = random.NextFloat(0f, Mathf.PI * 2f);
+            return new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
         }
     }
 }
